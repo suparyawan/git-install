@@ -1,0 +1,30 @@
+# rename file ini dengan nama .gitconfig
+# sertakan/copy di folder home-direktory/.gitconfig
+[user]
+	email = email@gglabs.uk
+	name = hendra sp
+
+[init]
+	defaultBranch = main
+
+[core]
+	# Hapus tanda komentar (#) di salah satu baris bawah ini sesuai OS Anda:
+	# Jika Anda pakai Windows, gunakan baris di bawah ini:
+	autocrlf = true
+	# Jika Anda pakai Mac / Linux, gunakan baris di bawah ini:
+	# autocrlf = input
+
+[pull]
+	rebase = true
+
+[help]
+	autocorrect = 30
+
+[alias]
+	# Mengubah git log biasa menjadi git lg yang super indah dan berwarna
+	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	
+	# Alias tambahan biar ketikan makin instan (opsional)
+	st = status
+	cm = commit -m
+	br = branch
