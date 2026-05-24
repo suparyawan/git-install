@@ -23,7 +23,9 @@
 [alias]
 	# Mengubah git log biasa menjadi git lg yang super indah dan berwarna
 	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
-	
+        
+        # Catatan Penting: Tanda seru (!) di depan perintah alias di atas wajib ditulis. Tanda seru tersebut memberi tahu Git bahwa kita ingin menjalankan perintah eksternal/kombinasi terminal
+        ft = !git fetch && git status	
 	# Alias tambahan biar ketikan makin instan (opsional)
 	st = status
 	cm = commit -m
