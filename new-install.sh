@@ -14,6 +14,7 @@ STATUS_GIT="Belum diproses"
 STATUS_TIG="Belum diproses"
 STATUS_CONFIG="Belum diproses"
 STATUS_GH="Belum diproses"
+STATUS_CREDENTIAL="Belum dikonfigurasi"
 
 # cek apakah git sudah ada
 check_git() {
@@ -36,6 +37,15 @@ check_tig() {
 # cek apakah gh sudah ada
 check_gh() {
     if command -v gh &> /dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# cek apakah user sudah login di gh cli
+check_gh_auth() {
+    if gh auth status &> /dev/null; then
         return 0
     else
         return 1
@@ -73,6 +83,9 @@ install_git() {
 
     # Integrasi Pemindahan Gitconfig
     configure_gitconfig
+    
+    # Coba jalankan otomatis kredensial jika gh sudah siap dan terautentikasi
+    sync_gh_credential
 }
 
 configure_gitconfig() {
@@ -119,6 +132,21 @@ install_gh() {
             STATUS_GH="Gagal"
         fi
     fi
+
+    # Coba jalankan otomatis kredensial pasca instalasi gh
+    sync_gh_credential
+}
+
+sync_gh_credential() {
+    if check_gh; then
+        if check_gh_auth; then
+            echo "⚙️  Mengeksekusi 'gh auth setup-git' otomatis..."
+            gh auth setup-git 2>/dev/null
+            STATUS_CREDENTIAL="⚡ Aktif (Otomatis terhubung via gh)"
+        else
+            STATUS_CREDENTIAL="⏳ Menunggu (Harus jalankan 'gh auth login' dulu)"
+        fi
+    fi
 }
 
 show_resume() {
@@ -127,10 +155,11 @@ show_resume() {
     echo "         RESUME INSTALASI & KONFIGURASI           "
     echo "=================================================="
     echo "  Status Eksekusi:"
-    echo "  • Git Engine      : $STATUS_GIT"
-    echo "  • Tig Terminal GUI: $STATUS_TIG"
-    echo "  • GitHub CLI (gh) : $STATUS_GH"
-    echo "  • .gitconfig Sync : $STATUS_CONFIG"
+    echo "  • Git Engine          : $STATUS_GIT"
+    echo "  • Tig Terminal GUI    : $STATUS_TIG"
+    echo "  • GitHub CLI (gh)     : $STATUS_GH"
+    echo "  • .gitconfig Sync     : $STATUS_CONFIG"
+    echo "  • GH Credential Helper: $STATUS_CREDENTIAL"
     echo "--------------------------------------------------"
     
     echo "  Informasi Versi Sistem Aktif:"
@@ -161,6 +190,24 @@ show_resume() {
         echo "  🚀 Alias 'git lg' : Tersedia (Siap digunakan!)"
     else
         echo "  ⚠️  File ~/.gitconfig tidak ditemukan di system local."
+    fi
+    echo "--------------------------------------------------"
+    
+    # Penambahan blok info kondisional di bagian bawah resume
+    if check_gh; then
+        if ! check_gh_auth; then
+            echo "  💡 TIPS LANJUTAN:"
+            echo "     Karena Anda belum login ke GitHub CLI, integrasi passwordless"
+            echo "     belum bisa diaktifkan secara otomatis. Silakan ketik:"
+            echo "     👉 gh auth login"
+            echo "     Setelah sukses login, sinkronisasikan manual sekali dengan:"
+            echo "     👉 gh auth setup-git"
+        else
+            echo "  🎉 SINKRONISASI BERHASIL!"
+            echo "     Sistem mendeteksi Anda telah login di GitHub CLI."
+            echo "     Perintah 'gh auth setup-git' telah sukses dieksekusi."
+            echo "     Sekarang Anda bisa 'git push/pull' tanpa diminta password!"
+        fi
     fi
     echo "=================================================="
     echo "             SELESAI / READY TO USE               "
