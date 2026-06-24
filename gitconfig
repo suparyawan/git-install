@@ -19,6 +19,9 @@
 
 [help]
 	autocorrect = 30
+ 
+[safe]
+    directory = *
 
 [alias]
 	# Mengubah git log biasa menjadi git lg yang super indah dan berwarna
@@ -30,3 +33,5 @@
 	st = status
 	cm = commit -m
 	br = branch
+  bra = branch -a
+  rma = remote -v
